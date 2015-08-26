@@ -12,14 +12,14 @@ Sys.setlocale( "LC_TIME", "English" )
 setwd("C:/Users/ASUS/Ecommerce/GoogleAnalytics1")
 
 # base data Analytics.csv
-data <- data.table( read.csv( "Analytics.csv", stringsAsFactors = FALSE, 
+data <- data.table( read.csv( "data/Analytics.csv", stringsAsFactors = FALSE, 
                               colClasses = c( rep( "character", 2 ), rep( "numeric", 5 ) ) ) )
 
 # -------------------------------------------------------------------------------------------
 # the first 9 rows are meaningless and blank lines are seen as NA value
 # rename the column name of the new data 
 newdata <- data.table( read.csv( file.choose(), stringsAsFactors = FALSE, 
-                                 na.strings = "", skip = 9, header = FALSE ) )
+                                 na.strings = "", skip = 7, header = FALSE ) )
 
 newdata <- newdata[ complete.cases(newdata), ]
 setnames( newdata, names(data) )
@@ -77,7 +77,10 @@ lastestrevenue <- ggplot( revenuedata, aes( reorder( AggregatedSource, -TotalRev
 
 # ------------------------------------------------------------------------------------------
 # revenue distribution : how much revenue does each transaction generate
-revenuedistribution <- ggplot( data, aes(Revenue) ) + geom_histogram( fill = "royalblue3" ) + 
+library(scales)
+revenuedistribution <- ggplot( data, aes(Revenue) ) + 
+					   geom_histogram( aes( y = ..density.. ), fill = "royalblue3" ) + 
+					   scale_y_continuous( labels = comma ) +
 					   ggtitle( "Revenue Distribution" )
 
 # ------------------------------------------------------------------------------------------
@@ -122,7 +125,7 @@ print( revenuedistribution  , vp = define_region( 3:4, 4:5 ) )
 # aggregated version
 countSourceSpread <- spread( countSource, key = AggregatedSource, value = Count )
 countSourceSpread$TotalTransaction <- rowSums( countSourceSpread[ , -1, with = FALSE ] )
-write.csv( countSourceSpread, file = "aggregatedcategory.csv", row.names = FALSE )
+write.csv( countSourceSpread, file = "data/aggregatedcategory.csv", row.names = FALSE )
 
 #  non-aggregated version
 data$Category <- sourcecategory$category[ match(data$MediaSource, str_trim(sourcecategory$sources) ) ]
@@ -133,10 +136,10 @@ countCategory <- data.table( with( data, table( Date, Category ) ) )
 setnames( countCategory, "N", "Count" )
 
 countCategorySpread <- spread( countCategory, key = Category, value = Count )
-write.csv( countCategorySpread, file = "category.csv", row.names = FALSE )
+write.csv( countCategorySpread, file = "data/category.csv", row.names = FALSE )
 
-# overide the base Analytics data, remember to exclude the added column
+# overide the base Analytics data, remember to exclude the added column such as 
 # Date, AggregatedSource, Category
-write.csv( data %>% select( 1:7 ), file = "Analytics1.csv", row.names = FALSE )
+write.csv( data %>% select( 1:7 ), file = "data/Analytics1.csv", row.names = FALSE )
 
 

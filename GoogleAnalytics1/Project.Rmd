@@ -8,6 +8,10 @@ output:
   pdf_document: default
 ---
 
+## Task Summary
+
+
+
 ## I. Environment Setting
 
 Setting includes, load in the required libraries, clean up the global environment, set the local time to English ( this will prevent dates from printing out in Chinese ) and set the working directory.
@@ -42,7 +46,7 @@ head( data, 3 )
 
 Read in the new dataset downloaded from Google Analytics( .csv version ). In this case, it is the file "Analytics 20150819-20150824.csv" in the folder, note that the file.choose function enables the dataset to be anywhere in your computer. You're free to download the new dataset from Google Analytics to any place you want in your computer as long as you can find it. Also note that, after all the necessary tasks are done, the new dataset will be appended to the base dataset "Analytics.csv", which means you can delete the new dataset afterwards. The preprocessing steps required for the csv file is elaborated below.
 
-- The first 9 rows are meaningless, they're simply gibberish when downloaded from Google Analytics.
+- The first 6 rows are meaningless, they're simply gibberish when downloaded from Google Analytics.
 - The csv file does not contain the header, rename them manually using the names of the base data. 
 - All blank lines are seen as NA value, and rows that contains NA values are removed after you've finished reading the new dataset.
 
@@ -50,7 +54,7 @@ Read in the new dataset downloaded from Google Analytics( .csv version ). In thi
 ```{r}
 
 newdata <- data.table( read.csv( file.choose(), stringsAsFactors = FALSE, 
-                                 na.strings = "", skip = 9, header = FALSE ) )
+                                 na.strings = "", skip = 7, header = FALSE ) )
 newdata <- newdata[ complete.cases(newdata), ]
 setnames( newdata, names(data) )
 head( newdata, 3 )
