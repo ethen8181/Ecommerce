@@ -108,6 +108,9 @@ define_region <- function( row, col )
 {
     viewport( layout.pos.row = row, layout.pos.col = col )
 } 
+
+png( paste0( "plot/", latestdate, ".png" ), width = 1200, height = 800 )
+
 # Open a new page on grid device
 grid.newpage() 
 # define the layout of the new grid
@@ -117,6 +120,8 @@ print( lastestrevenue       , vp = define_region( 1:2, 1:3 ) )
 print( transactionpercentage, vp = define_region( 1:2, 4:5 ) )
 print( transactionperday    , vp = define_region( 3:4, 1:3 ) )
 print( revenuedistribution  , vp = define_region( 3:4, 4:5 ) )
+
+dev.off()
 
 # ------------------------------------------------------------------------------------------
 # write out files section
