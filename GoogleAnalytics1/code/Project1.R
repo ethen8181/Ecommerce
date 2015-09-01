@@ -27,12 +27,12 @@ setnames( newdata, names(data) )
 # preprocess the Revenue, Tax, ShippingFee and Refund column : convert them to numeric  
 columns <- which ( names(data) %in% c( "Revenue", "Tax", "ShippingFee", "Refund" ) )
 # define the preprocessing function
-preprocess <- function(x)
+Preprocess <- function(x)
 {
     string <- str_extract( x, "([:digit:]+\\,)*([:digit:]+)" )
     as.numeric( gsub( "\\,", "", string ) )
 }
-newdata <- newdata %>% modifyList( lapply( newdata[ , columns, with = FALSE ], preprocess ) )
+newdata <- newdata %>% modifyList( lapply( newdata[ , columns, with = FALSE ], Preprocess ) )
 
 # combine the new and original dataset
 # use unique to prevent accidently loading in data of the same day 
@@ -104,7 +104,7 @@ transactionpercentage <- ggplot( sourcesdata, aes( 1, Source, fill = AggregatedS
 
 # ------------------------------------------------------------------------------------------
 # print the plot 
-define_region <- function( row, col )
+DefineRegion <- function( row, col )
 {
     viewport( layout.pos.row = row, layout.pos.col = col )
 } 
@@ -116,10 +116,10 @@ grid.newpage()
 # define the layout of the new grid
 pushViewport( viewport( layout = grid.layout( 4, 5 ) ) )
 # print each plot onto the grid with the specified row and col width
-print( lastestrevenue       , vp = define_region( 1:2, 1:3 ) )
-print( transactionpercentage, vp = define_region( 1:2, 4:5 ) )
-print( transactionperday    , vp = define_region( 3:4, 1:3 ) )
-print( revenuedistribution  , vp = define_region( 3:4, 4:5 ) )
+print( lastestrevenue       , vp = DefineRegion( 1:2, 1:3 ) )
+print( transactionpercentage, vp = DefineRegion( 1:2, 4:5 ) )
+print( transactionperday    , vp = DefineRegion( 3:4, 1:3 ) )
+print( revenuedistribution  , vp = DefineRegion( 3:4, 4:5 ) )
 
 dev.off()
 

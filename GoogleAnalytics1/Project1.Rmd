@@ -1,27 +1,34 @@
 ---
 title: "Google Analytics Project1"
 author: "Ethen Liu"
-date: "2015/8/25"
+date: "2015/9/1"
 output:
   html_document:
     keep_md: yes
+    toc: yes
   pdf_document: default
 ---
 
 ## Project Scenario
 
-Everyday, a digital markerter needs to download transaction data from Google Analytics and extract the information needed to generate his daily report. Sure, if he's really good with Excel then spending some time everyday will still do the job. The setback  for doing work in Excel is that the processing time would significantly scale up when the dataset starts to get larger. Therefore, the main purpose of this project is to solve the digital markerter's problem. After a simple step of running the code and passing in the dataset, the code will write out the partial data that the Digital Markerter want into a csv file, and also create some simple visualizations of the insights that can be drawn from the data. Insights includes : For this platform, which media sources are bringing more transaction and revenue? How much money do people spent per transaction on this platform? 
+Everyday, digital markerters need to download transaction data from Google Analytics and extract the information needed to generate his daily report. Sure, if he's really good with Excel then spending some time everyday will still do the job. The setback  for doing all the work in Excel is that the processing time will significantly scale up when the dataset starts to get larger. Therefore, the main purpose of this project is to solve the digital markerter's problem. After a simple step of running the code and passing in the dataset, the code will write out the partial, tidy data that the Digital Markerter want into a csv file, and also create some simple visualizations of the insights that can be drawn from the data. Insights includes : For this platform, which media sources are bringing more transaction and revenue? How much money do people spent per transaction on this platform? 
 
 ## Dataset
 
 All the datasets are stored in the "data" folder. Each dataset's in-depth description is provided below. The numbers in the dataset have been shadowed or revalued, but the gist remains the same.
 
+- `Analytics.csv` The "base" file that stores the historical data. To be explicit, suppose the "Analyticsnew.csv" contains transaction data on August 18, then the "base" file will contain  transaction data starting from day one when Google Analytics began to keep track of the transaction that happend on this website and its reports are available for download to the digital marketers to the day before August 18. This data is clean and does not requires cleaning when you read it in.
+    - This data consists of transaction records from August 15, 2015 to August 19, 2015. There are six columns in total, namely TransactionCode, MediaSource, Revenue, Tax, ShippingFree, Refund and Amount. Desciptions of what each variable (columns) stands for are given below.
+    - "MediaSource" Keeps track of which media was the traffic coming from.
+    - "Amount" column records the number of products that the consumer purchased for that transaction.
+    - Given the names of the columns, all other columns should be self-descriptive. 
+    
+
 - `Analyticsnew.csv` The new transaction data that the digital marketer downloaded everyday, well, not always everyday. On some occasions, he only needs to do it once every two to three days. Some preprocessing is required when reading in the file, steps are elaborated in the following. 
     - The first 6 rows are meaningless, they're simply gibberish when downloaded from Google Analytics.
-    - The csv file does not contain the header ( it probably does, but shows up as gibberish ), rename them manually using names from the base data. 
+    - The csv file does not contain the header ( it probably does, but shows up as gibberish ), rename them manually using column names from the base data. 
     - All blank lines in the file are seen as NA value, and rows that contains NA values are removed after you've finished reading the new dataset.
     
-- `Analytics.csv` The "base" file that stores the historical data. To be explicit, suppose the "Analyticsnew.csv" contains transaction data on August 18, then the "base" file will contain  transaction data starting from day one when Google Analytics began to keep track and available for download to the digital marketers ( In this example of part of the data was extracted ) to the day before August 18. This data is clean and does not requires cleaning when you read it in. 
 
 All other datasets in the "data" folder are files that have been written out after the information needed were peeled out from the two datasets above. Note that for those two datasets, they both still require some preprocessing steps after reading them, such as converting characters to date, numberic and so on. Details are further described in the Data Preprocessing section.
 
@@ -47,17 +54,17 @@ setwd("C:/Users/ASUS/Ecommerce/GoogleAnalytics1")
 
 ## II. Data Preprocessing
 
+**Step1:** `data` Read in the "base" data.
 
 ```{r}
 
-# base data Analytics.csv
 data <- data.table( read.csv( "data/Analytics.csv", stringsAsFactors = FALSE ) )
 head( data, 3 )
 
 ```
 
 
-Read in the new dataset downloaded from Google Analytics( .csv version ). In this case, it's the file "Analyticsnew.csv" in the data folder. The file.choose function enables the dataset to be anywhere in your computer. Therefore, you're free to download the new dataset from Google Analytics to any place you want in your computer as long as you can find it. Also note that, after all the necessary tasks are done, the new dataset will be appended to the base dataset "Analytics.csv", which means you can delete the new dataset afterwards. But for reproducibility of this code, the data is written into "Analytics1.csv".
+**Step2:** `newdata` Read in the new dataset downloaded from Google Analytics( .csv version ). In this case, it's the file "Analyticsnew.csv" in the data folder. The file.choose function enables the dataset to be anywhere in your computer. Therefore, you're free to download the new dataset from Google Analytics to any place you want in your computer as long as you can find it. Also note that, after all the necessary tasks are done, the new dataset will be appended to the base dataset "Analytics.csv", which means you can delete the new dataset afterwards. But for reproducibility of this code, the data is written into "Analytics1.csv".
 
 ```{r}
 
@@ -69,52 +76,58 @@ head( newdata, 3 )
 
 ```
 
-- **Note:** From the partial printed data above, four columns, including Revenue, Tax, ShippingFee and Refund contains symbols, punctuation marks and therefore can't be directly converted to numeric values as they should be. So we'll next handle this issue.
+- **Note:** Four columns, including Revenue, Tax, ShippingFee and Refund contains symbols, punctuation marks and therefore can't be directly converted to numeric values as they should be. So we'll next handle this issue.
 
-#### Preprocessing Steps
-
-**Step1:** `preprocess` Define a function. Given the specified column of the dataset, first extract all the numeric digits and convert the string to numeric value. A caution worth noticing is the fact that numbers starting from 1,000 contains a comma to seperate the last three values, remember to exclude that as well. There might be a better way to do this, so I'm open to different solutions. Now, we're good to go! Select the columns from the newdata that requires this preprocessing step, and use the preprocess function on all of them. 
+**Step3:** `Preprocess` Define a function. Given the specified column of the dataset, first extract all the numeric digits and convert the string to numeric value. A caution worth noticing is the fact that numbers starting from 1,000 contains a comma to seperate the last three values, remember to exclude that as well. There might be a better way to do this, so I'm open to different solutions. Now, we're good to go! Select the columns from the newdata that requires this preprocessing step, and use the Preprocess function on all of them. 
 
 ```{r}
 
-preprocess <- function(x)
+Preprocess <- function(x)
 {
     string <- str_extract( x, "([:digit:]+\\,)*([:digit:]+)" )
     as.numeric( gsub( "\\,", "", string ) )
 }
-
+# apply function to columns
 columns <- which ( names(data) %in% c( "Revenue", "Tax", "ShippingFee", "Refund" ) )
-newdata <- newdata %>% 
-           modifyList( lapply( newdata[ , columns, with = FALSE ], preprocess ) )
+newdata <- newdata %>% modifyList( lapply( newdata[ , columns, with = FALSE ], Preprocess ) )
 head( newdata, 3 )
 
 ```
 
-- **Note:** After confirming that the former preprocessing step worked out just like we want it to. Move on to the next step.
+- **Note:** After confirming that the former preprocessing step worked out just the way we wanted it to. Move on to the next step.
 
-**Step2:** `data` Combine the new and original dataset, and use the unique function to prevent accidently loading in data of the same day.
+**Step4:** `data` Combine the new and the base dataset, and use the unique function to prevent accidently loading in data of the same day, resulting in misleading numbers.
 
-**Step3:** Extract date from the TransactionCode column and add a new Date column to the data. The pattern is ON, followed by 5 random digits from 0 to 9, then the after is the five digits that is the recorded date in which that transaction occured. 
+**Step5:** Extract date from the TransactionCode column and add a new Date column to the data. The pattern is ON, followed by 5 random digits from 0 to 9, then the five digits after that is the recorded date in which that transaction occured. 
 
 ```{r}
 
+# Step 4
 data <- unique( rbind( data, newdata ) )
-
+# Step 5
 date <- gsub( "ON[0-9]{5}([0-9]{6}).*", "20\\1", data$TransactionCode )
 data$Date <- as.Date( date, format = "%Y%m%d" )
 
 ```
 
-The next section of the preprocessing is to categorize the MediaSource into user-defined category for aggregated source's exploratory data analysis. The category is pre-defined in the "sourcecategory.csv" file that is placed in the "code" file. The way for doing it is sort of like the VLOOKUP function in excel.
+**Step6:** The next section of the preprocessing is to categorize the MediaSource into user-defined category for aggregated source's exploratory data analysis. The category is pre-defined in the "sourcecategory.csv" file that is placed in the "code" file. If you're familiar with Excel, the way for doing it is sort of like the VLOOKUP function in excel.
 
 ```{r}
 
 sourcecategory <- read.csv( "code/sourcecategory.csv", stringsAsFactors = FALSE )
+head( sourcecategory, 3 )
+
+```
+
+- **Note:** There're three columns for this "sourcecategory.csv" file. The "aggregatecategory" column is used here to categorize all the media source that Google Analytics kept tracked of. That way we can discover insights from these aggregated media source. The "category" column is another way of aggregating the souce, it will be used in the Write Out Files Section.
+
+```{r}
 # remove possible whitespace in the beginning and end of source before matching 
 data$AggregatedSource <- sourcecategory$aggregatecategory[ match(data$MediaSource,
-                                                    str_trim(sourcecategory$sources) ) ]
+                                                           str_trim(sourcecategory$sources) ) ]
 # all the ones that are not matched are categorized as all other
 data$AggregatedSource[ is.na(data$AggregatedSource) ] <- "all other"
+head( data, 3 )
 
 ```
 
@@ -182,8 +195,7 @@ revenuedistribution <- ggplot( data, aes(Revenue) ) +
 ```{r}
 
 # Visualization 4 
-sourcesdata <- data[ data$Date == latestdate, .( Source = .N ), 
-                     by = list(AggregatedSource) ] %>% 
+sourcesdata <- data[ data$Date == latestdate, .( Source = .N ), by = list(AggregatedSource) ] %>%
 		       arrange( desc(Source) )
 
 breaks <- with( sourcesdata, cumsum(Source) - Source/2 )
@@ -206,7 +218,7 @@ transactionpercentage <- ggplot( sourcesdata, aes( 1, Source, fill = AggregatedS
 ```{r, fig.height = 12, fig.width = 15  }
 
 # print the plot 
-define_region <- function( row, col )
+DefineRegion <- function( row, col )
 {
     viewport( layout.pos.row = row, layout.pos.col = col )
 } 
@@ -215,16 +227,16 @@ grid.newpage()
 # define the layout of the new grid
 pushViewport( viewport( layout = grid.layout( 4, 5 ) ) )
 # print each plot onto the grid with the specified row and col width
-print( lastestrevenue       , vp = define_region( 1:2, 1:3 ) )
-print( transactionpercentage, vp = define_region( 1:2, 4:5 ) )
-print( transactionperday    , vp = define_region( 3:4, 1:3 ) )
-print( revenuedistribution  , vp = define_region( 3:4, 4:5 ) )
+print( lastestrevenue       , vp = DefineRegion( 1:2, 1:3 ) )
+print( transactionpercentage, vp = DefineRegion( 1:2, 4:5 ) )
+print( transactionperday    , vp = DefineRegion( 3:4, 1:3 ) )
+print( revenuedistribution  , vp = DefineRegion( 3:4, 4:5 ) )
 
 ```
 
-```{r}
+## IV. Write Out Files Section
 
-# write out files section
+```{r}
 
 # write out the count the number of transaction from different sources in each day to excel file
 # aggregated version

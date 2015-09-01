@@ -13,7 +13,7 @@ website <- "http://www.rakuten.com.tw"
 
 # ------------------------------------------------------------------------
 # function that does the webcrawling
-webcrawl <- function( url )
+WebCrawl <- function( url )
 {
     # webpage's product section
     product <- html(url) %>% 
@@ -76,7 +76,7 @@ productdatalist <- vector( mode = "list", length = number_of_webpage )
 for( i in 1:number_of_webpage )
 {
     url <- paste0( "http://www.rakuten.com.tw/shop/electrolux/products/?h=3&p=1&l-id=tw_search_pagen_", i )   
-    productdatalist[[i]] <- webcrawl( url = url )
+    productdatalist[[i]] <- WebCrawl( url = url )
     
     # assign random sleeping time before crawling the next page, break if it's the last page
     if( i == number_of_webpage )
