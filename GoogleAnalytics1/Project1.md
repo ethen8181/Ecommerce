@@ -4,13 +4,13 @@ Ethen Liu
 
 ## Project Scenario
 
-Everyday, digital markerters need to download transaction data from Google Analytics and extract the information needed to generate his daily report. Sure, if he's really good with Excel then spending some time everyday will still do the job. The setback  for doing all the work in Excel is that the processing time will significantly scale up when the dataset starts to get larger. Therefore, the main purpose of this project is to solve the digital markerter's problem. After a simple step of running the code and passing in the dataset, the code will write out the partial, tidy data that the Digital Markerter want into a csv file, and also create some simple visualizations of the insights that can be drawn from the data. Insights includes : For this platform, which media sources are bringing more transaction and revenue? How much money do people spent per transaction on this platform? 
+Everyday, digital markerters need to download transaction data from Google Analytics and extract the information needed to generate his daily report. Sure, if he's really good with Excel then spending some time everyday will still do the job. The setback  for doing all the work in Excel is that the processing time will significantly scale up when the dataset starts to get larger. Therefore, the main purpose of this project is to solve the digital markerter's problem. After a simple step of running the code and passing in the dataset, the code will write out the partial, tidy data that the Digital Markerter want into a csv file, and also create some simple visualizations of the insights that can be drawn from the data. Insights includes : For this platform, which media sources are bringing more transaction and revenue? How much money do most people spent per transaction on this platform? 
 
 ## Dataset
 
 All the datasets are stored in the "data" folder. Each dataset's in-depth description is provided below. The numbers in the dataset have been shadowed or revalued, but the gist remains the same.
 
-- `Analytics.csv` The "base" file that stores the historical data. To be explicit, suppose the "Analyticsnew.csv" contains transaction data on August 18, then the "base" file will contain  transaction data starting from day one when Google Analytics began to keep track of the transaction that happend on this website and its reports are available for download to the digital marketers to the day before August 18. This data is clean and does not requires cleaning when you read it in.
+- `Analytics.csv` "base" file that stores the historical data. To be explicit, suppose the "Analyticsnew.csv" contains transaction data on August 18, then the "base" file will contain  transaction data starting from day one when Google Analytics began to keep track of the transaction that happend on this website and its reports are available for download to the digital marketers to the day before August 18. This data is clean and does not requires cleaning when you read it in.
     - This data consists of transaction records from August 15, 2015 to August 19, 2015. There are six columns in total, namely TransactionCode, MediaSource, Revenue, Tax, ShippingFree, Refund and Amount. Desciptions of what each variable (columns) stands for are given below.
     - "MediaSource" Keeps track of which media was the traffic coming from.
     - "Amount" column records the number of products that the consumer purchased for that transaction.
@@ -173,15 +173,15 @@ head( data, 3 )
 
 ## III. Exploratory Data Analysis
 
-This part generates four visualizations.
+This part generates four visualizations. All of them are put together into one single plot at the end of this section.
 
 1. `transactionperday` Line graph : Count the number of transactions from each aggregated sources for each day.
 
-2. `lastestrevenue` Bar plot : Total revenue that was generated from each aggregated sources of the most present date. 
+2. `lastestrevenue` Bar plot : Total revenue that was generated from each aggregated sources of the most present date ( Suppose that data consists of between August 15 tp 24, then the most present date is August 24 ). 
 
 3. `revenuedistribution` Histogram : Distribution of how much revenue does each transaction generate.
 
-4. `transactionpercentage` Pie chart : Percentage of transactions from each aggregated sources of the most present date, . 
+4. `transactionpercentage` Pie chart : Percentage of transactions from each aggregated sources of the most present date. 
 
 
 
@@ -190,7 +190,6 @@ This part generates four visualizations.
 # use table so that days that have zero transcation will also show up 
 countSource <- data.table( with( data, table( Date, AggregatedSource ) ) )
 setnames( countSource, "N", "Count" )
-
 # have to convert the Date column to date once again
 countSource$Date <- as.Date( countSource$Date, format = "%Y-%m-%d" )
 
@@ -243,7 +242,7 @@ transactionpercentage <- ggplot( sourcesdata, aes( 1, Source, fill = AggregatedS
 						 guides( fill = guide_legend( override.aes = list( colour = NA ) ) ) + 
                          coord_polar("y") +
 						 scale_y_continuous( breaks = breaks, labels = paste0( as.character(labels), "%" ) ) +
-						 ggtitle( sprintf( "Each Source's Percentage of Transaction on %s", latestdate ) ) +
+						 ggtitle( sprintf( "Each Source's Transaction Percentage on %s", latestdate ) ) +
                          scale_fill_discrete( limits = sourcesdata$AggregatedSource ) +
 						 theme( axis.title  = element_blank(),
 						        axis.ticks  = element_blank(), 
@@ -271,6 +270,14 @@ print( revenuedistribution  , vp = DefineRegion( 3:4, 4:5 ) )
 
 ![](Project1_files/figure-html/unnamed-chunk-12-1.png) 
 
+**Findings from the Visualization**
+
+- The top-left plot indicates how much revenue did each aggregated media source bring to the site on August 24, which is the latest ( most present ) date in the dataset. The plot in the top-right further tells us the number of transactions, expressed in percent, from each aggregated media source. Note that the number is rounded as percentage, so there are chances in which the percentages don't add up to 100.
+
+- From the plot that depicts the number of transaction from each aggregated media source, we're able to identify that during this period of time, from August 15 to August 24, customers that came from feebee and findprice accounted for more transactions for this e-commerce websites.
+
+- Histogram of the revenue distribution shows that most consumers spent amount 200 to 500 per transaction.
+
 ## IV. Write Out Files Section
 
 
@@ -297,4 +304,40 @@ write.csv( countCategorySpread, file = "data/category.csv", row.names = FALSE )
 write.csv( data %>% select( 1:7 ), file = "data/Analytics1.csv", row.names = FALSE )
 ```
 
+## IV. Session Information
+
+
+```r
+sessionInfo()
+```
+
+```
+## R version 3.2.0 (2015-04-16)
+## Platform: i386-w64-mingw32/i386 (32-bit)
+## Running under: Windows 7 x64 (build 7601) Service Pack 1
+## 
+## locale:
+## [1] LC_COLLATE=Chinese (Traditional)_Taiwan.950 
+## [2] LC_CTYPE=Chinese (Traditional)_Taiwan.950   
+## [3] LC_MONETARY=Chinese (Traditional)_Taiwan.950
+## [4] LC_NUMERIC=C                                
+## [5] LC_TIME=English_United States.1252          
+## 
+## attached base packages:
+## [1] grid      stats     graphics  grDevices utils     datasets  methods  
+## [8] base     
+## 
+## other attached packages:
+## [1] data.table_1.9.4 stringr_1.0.0    dplyr_0.4.1      gridExtra_0.9.1 
+## [5] ggplot2_1.0.0    tidyr_0.2.0     
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_0.11.5      knitr_1.9        magrittr_1.5     MASS_7.3-40     
+##  [5] munsell_0.4.2    colorspace_1.2-4 plyr_1.8.1       tools_3.2.0     
+##  [9] parallel_3.2.0   gtable_0.1.2     DBI_0.3.1        htmltools_0.2.6 
+## [13] lazyeval_0.1.10  yaml_2.1.13      digest_0.6.8     assertthat_0.1  
+## [17] reshape2_1.4.1   formatR_1.1      evaluate_0.5.5   rmarkdown_0.6.1 
+## [21] labeling_0.3     stringi_0.4-1    scales_0.2.4     chron_2.3-45    
+## [25] proto_0.3-10
+```
 
