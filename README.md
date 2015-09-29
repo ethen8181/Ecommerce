@@ -7,9 +7,11 @@
 - `data` All the datasets that goes along with this project, please refer to the report for detailed description.
 - `code` "Project1.R" contains only the r code for the report, and "sourcecategory.csv", please refer to the report for what is it used for.
 
-**shinydashboard**
+**shinydashboard:** Uses the RGoogleAnalytics package, which is a R wrapper for the Google Analytics API to create dashboard that visualize daily sales performance and multiple web traffic measurements. In progress
 
-In progress
+Note that initial setup in terms of registering an app with the Google Analytics API is required, so if you’re not familiar with the required environment settings to use the package, please refer to the following [tutorial](http://www.tatvic.com/blog/google-analytics-data-extraction-in-r/). 
+
+- `shinydashboard.R` To be able to run the dashboard, you still need to fill in the table.id or so called View ID for your Google Analytics in the fifth line of this code, you should see it under Admin > View Settings. All other R codes are functions that will be sourced in to “shinydashboard.R”.  
 
 **webscrape:** Webscrape a e-commerce website to extract product info. Last updated: 2015.9.2
 
