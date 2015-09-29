@@ -40,8 +40,8 @@ suppressWarnings( library(stringr) )
 suppressMessages( library(data.table) )
 
 rm( list = ls() )
-Sys.setlocale( "LC_TIME", "English" )
-setwd("C:/Users/ASUS/Ecommerce/GoogleAnalytics1")
+Sys.setlocale( "LC_ALL", "C" )
+setwd("/Users/ethen/Ecommerce/GoogleAnalytics1")
 ```
 
 ## II. Data Preprocessing
@@ -66,11 +66,11 @@ head( data, 3 )
 ```
 
 
-**Step2:** `newdata` Read in the new dataset downloaded from Google Analytics( .csv version ). In this case, it's the file "Analyticsnew.csv" in the data folder. The file.choose function enables the dataset to be anywhere in your computer. Therefore, you're free to download the new dataset from Google Analytics to any place you want in your computer as long as you can find it. Also note that, after all the necessary tasks are done, the new dataset will be appended to the base dataset "Analytics.csv", which means you can delete the new dataset afterwards. But for reproducibility of this code, the data is written into "Analytics1.csv".
+**Step2:** `newdata` Read in the new dataset downloaded from Google Analytics( .csv version ). In this case, it's the file "Analyticsnew.csv" in the data folder. Note that, after all the necessary tasks are done, the new dataset will be appended to the base dataset "Analytics.csv", which means you can delete the new dataset afterwards. But for reproducibility of this code, the data is written into "Analytics1.csv".
 
 
 ```r
-newdata <- data.table( read.csv( file.choose(), stringsAsFactors = FALSE, 
+newdata <- data.table( read.csv( "data/Analyticsnew.csv", stringsAsFactors = FALSE, 
                                  na.strings = "", skip = 7, header = FALSE ) )
 newdata <- newdata[ complete.cases(newdata), ]
 setnames( newdata, names(data) )
@@ -268,6 +268,10 @@ print( transactionperday    , vp = DefineRegion( 3:4, 1:3 ) )
 print( revenuedistribution  , vp = DefineRegion( 3:4, 4:5 ) )
 ```
 
+```
+## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+```
+
 ![](Project1_files/figure-html/unnamed-chunk-12-1.png) 
 
 **Findings from the Visualization**
@@ -312,32 +316,28 @@ sessionInfo()
 ```
 
 ```
-## R version 3.2.0 (2015-04-16)
-## Platform: i386-w64-mingw32/i386 (32-bit)
-## Running under: Windows 7 x64 (build 7601) Service Pack 1
+## R version 3.2.2 (2015-08-14)
+## Platform: x86_64-apple-darwin13.4.0 (64-bit)
+## Running under: OS X 10.10.5 (Yosemite)
 ## 
 ## locale:
-## [1] LC_COLLATE=Chinese (Traditional)_Taiwan.950 
-## [2] LC_CTYPE=Chinese (Traditional)_Taiwan.950   
-## [3] LC_MONETARY=Chinese (Traditional)_Taiwan.950
-## [4] LC_NUMERIC=C                                
-## [5] LC_TIME=English_United States.1252          
+## [1] C/C/C/C/C/en_US.UTF-8
 ## 
 ## attached base packages:
 ## [1] grid      stats     graphics  grDevices utils     datasets  methods  
 ## [8] base     
 ## 
 ## other attached packages:
-## [1] data.table_1.9.4 stringr_1.0.0    dplyr_0.4.1      gridExtra_0.9.1 
-## [5] ggplot2_1.0.0    tidyr_0.2.0     
+## [1] data.table_1.9.6 stringr_1.0.0    dplyr_0.4.3      gridExtra_2.0.0 
+## [5] ggplot2_1.0.1    tidyr_0.3.1     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.11.5      knitr_1.9        magrittr_1.5     MASS_7.3-40     
-##  [5] munsell_0.4.2    colorspace_1.2-4 plyr_1.8.1       tools_3.2.0     
-##  [9] parallel_3.2.0   gtable_0.1.2     DBI_0.3.1        htmltools_0.2.6 
-## [13] lazyeval_0.1.10  yaml_2.1.13      digest_0.6.8     assertthat_0.1  
-## [17] reshape2_1.4.1   formatR_1.1      evaluate_0.5.5   rmarkdown_0.6.1 
-## [21] labeling_0.3     stringi_0.4-1    scales_0.2.4     chron_2.3-45    
-## [25] proto_0.3-10
+##  [1] Rcpp_0.12.1      knitr_1.11       magrittr_1.5     MASS_7.3-43     
+##  [5] munsell_0.4.2    colorspace_1.2-6 R6_2.1.1         plyr_1.8.3      
+##  [9] tools_3.2.2      parallel_3.2.2   gtable_0.1.2     DBI_0.3.1       
+## [13] htmltools_0.2.6  lazyeval_0.1.10  yaml_2.1.13      digest_0.6.8    
+## [17] assertthat_0.1   reshape2_1.4.1   formatR_1.2.1    evaluate_0.8    
+## [21] rmarkdown_0.8    labeling_0.3     stringi_0.5-5    scales_0.3.0    
+## [25] chron_2.3-47     proto_0.3-10
 ```
 

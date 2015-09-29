@@ -9,7 +9,7 @@ library(data.table)
 # environment setting 
 rm( list = ls() )
 Sys.setlocale( "LC_TIME", "English" )
-setwd("C:/Users/ASUS/Ecommerce/GoogleAnalytics1")
+setwd("/Users/ethen/Ecommerce/GoogleAnalytics1")
 
 # base data Analytics.csv
 data <- data.table( read.csv( "data/Analytics.csv", stringsAsFactors = FALSE, 

@@ -47,8 +47,8 @@ suppressWarnings( library(stringr) )
 suppressMessages( library(data.table) )
 
 rm( list = ls() )
-Sys.setlocale( "LC_TIME", "English" )
-setwd("C:/Users/ASUS/Ecommerce/GoogleAnalytics1")
+Sys.setlocale( "LC_ALL", "C" )
+setwd("/Users/ethen/Ecommerce/GoogleAnalytics1")
 
 ```
 
@@ -64,11 +64,11 @@ head( data, 3 )
 ```
 
 
-**Step2:** `newdata` Read in the new dataset downloaded from Google Analytics( .csv version ). In this case, it's the file "Analyticsnew.csv" in the data folder. The file.choose function enables the dataset to be anywhere in your computer. Therefore, you're free to download the new dataset from Google Analytics to any place you want in your computer as long as you can find it. Also note that, after all the necessary tasks are done, the new dataset will be appended to the base dataset "Analytics.csv", which means you can delete the new dataset afterwards. But for reproducibility of this code, the data is written into "Analytics1.csv".
+**Step2:** `newdata` Read in the new dataset downloaded from Google Analytics( .csv version ). In this case, it's the file "Analyticsnew.csv" in the data folder. Note that, after all the necessary tasks are done, the new dataset will be appended to the base dataset "Analytics.csv", which means you can delete the new dataset afterwards. But for reproducibility of this code, the data is written into "Analytics1.csv".
 
 ```{r}
 
-newdata <- data.table( read.csv( file.choose(), stringsAsFactors = FALSE, 
+newdata <- data.table( read.csv( "data/Analyticsnew.csv", stringsAsFactors = FALSE, 
                                  na.strings = "", skip = 7, header = FALSE ) )
 newdata <- newdata[ complete.cases(newdata), ]
 setnames( newdata, names(data) )
