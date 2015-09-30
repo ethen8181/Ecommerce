@@ -1,39 +1,58 @@
-
 # Function for tabName = "Performance"
+library(data.table)
 
 # @date  : pass in the date character in the format of YYYY-MM-DD
-# @url   : the url for the given webpage
+# @url   : the url for the given webpage, please exclude the host name of the page
 # @metric: or so called the measure to indicate the performance 
-PerformanceData <- function( date, metric, url )
+PerformanceData <- function( date, metric, url, table.id )
 {
-	# exclude the front url 
-	url <- gsub( "https://ledoor.goiiz.com(.*)", "\\1", url )
+	GoogleQuery <- function( table.id )
+	{
+		query_list <- Init( start.date  = date,
+	                    	end.date    = date,
+		                    dimensions  = "ga:hour",
+		                    metrics     = metric,
+		                    filter      = paste0( "ga:pagePath==", url ),
+		                    table.id    = paste0( "ga:", table.id ) )
 
-	query_list <- Init( start.date  = date,
-	                    end.date    = date,
-	                    dimensions  = "ga:hour",
-	                    metrics     = metric,
-	                    filter      = paste0( "ga:pagePath==", url ),
-	                    table.id    = paste0( "ga:", table.id ) )
+		# Create the Query Builder object so that the query parameters are validated
+		# Extract the data and store it in a data-frame
+		ga_data <- GetReportData( QueryBuilder(query_list), token )		
+	}
 
-	# Create the Query Builder object so that the query parameters are validated
-	# Extract the data and store it in a data-frame
-	ga_data <- GetReportData( QueryBuilder(query_list), token )
-	ga_data <- cbind( date, ga_data )
+	# the second table.id does not have record before 2015.9.4
+	# querying it will lead to error 
+	if( as.Date(date) >= as.Date("2015-09-04") )
+	{	
+		data_list <- lapply( table.id, function(x)
+		{
+			GoogleQuery( table.id = x )
+		})
+		data <- do.call( rbind, data_list )
+
+		# all different measurement column will be assign with the name metric 
+		final <- cbind( date, aggregate( list( metric = data[,2] ), list( hour = data$hour ), FUN = sum ) )
+	}else
+	{
+		final <- cbind( date, GoogleQuery( table.id = table.id[1] ) )
+		setnames( final, names(final)[3], "metric")
+	}
+	return(final)
 }
 
 # ---------------------------------------------------------------------------------------------
 # testing code for Performance - uniqueview
 
+# date <- "2015-09-01"
 # metric <- "ga:uniquePageviews"
 # testing url 
-# url <- "https://ledoor.goiiz.com/p/E130119WNF000750"
+# url <- "/p/E130119WNF000750"
 
-# before <- PerformanceData( "2015-09-22", metric, url )
-# after  <- PerformanceData( "2015-09-28", metric, url )
+# before <- PerformanceData( "2015-09-22", metric, url, table.id )
+# after  <- PerformanceData( "2015-09-28", metric, url, table.id )
 # data   <- rbind( after, before )
 
-# test <- t.test( uniquePageviews ~ date, data = data, paired = TRUE )
+# test <- t.test( metric ~ date, data = data, paired = TRUE )
 
 # if there're no data to compare, the p.value will return as nan ( not a number )
 # if( !is.nan(test$p.value) )
@@ -48,7 +67,7 @@ PerformanceData <- function( date, metric, url )
 # 	}else
 # 	    string <- "Can Do Better ^^"	
 # 
-# 	summary <- tapply( data$uniquePageviews, data$date, sum )
+# 	summary <- tapply( data$metric, data$date, sum )
 # 	title <- paste0( "Total UU = ", names(summary[1]), ":  ", summary[1], ",  ", 
 # 	                                names(summary[2]), ":  ", summary[2] )
 # 
@@ -57,7 +76,7 @@ PerformanceData <- function( date, metric, url )
 # 				                     title  = title  ) )	              
 # }
 # 
-# plot <- ggplot( data, aes( hour, uniquePageviews, group = date, color = date ) ) +
+# plot <- ggplot( data, aes( hour, metric, group = date, color = date ) ) +
 #         geom_line() + 
 #         geom_point( size = 3 ) +
 #         scale_color_economist() + 
