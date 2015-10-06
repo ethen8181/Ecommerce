@@ -1,5 +1,4 @@
 # Function for tabName = "Performance"
-library(data.table)
 
 # @date  : pass in the date character in the format of YYYY-MM-DD
 # @url   : the url for the given webpage, please exclude the host name of the page
@@ -22,7 +21,7 @@ PerformanceData <- function( date, metric, url, table.id )
 
 	# the second table.id does not have record before 2015.9.4
 	# querying it will lead to error 
-	if( as.Date(date) >= as.Date("2015-09-04") )
+	if( as.Date(date) >= add_date )
 	{	
 		data_list <- lapply( table.id, function(x)
 		{
@@ -35,7 +34,7 @@ PerformanceData <- function( date, metric, url, table.id )
 	}else
 	{
 		final <- cbind( date, GoogleQuery( table.id = table.id[1] ) )
-		setnames( final, names(final)[3], "metric")
+		setnames( final, names(final)[3], "metric" )
 	}
 	return(final)
 }
@@ -43,6 +42,7 @@ PerformanceData <- function( date, metric, url, table.id )
 # ---------------------------------------------------------------------------------------------
 # testing code for Performance - uniqueview
 
+# add_date <- as.Date("2015-09-04")
 # date <- "2015-09-01"
 # metric <- "ga:uniquePageviews"
 # testing url 

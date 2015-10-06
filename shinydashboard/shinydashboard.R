@@ -1,14 +1,19 @@
 # shiny dashboard with google analytics 
 
 # environment setting
-# change table.id and token for different websites  
+# change table.id and token for different websites
+# in this code, there're two table.ids one for tracking mobile users and one for desktop users
+# the table.id for mobile users(the second one) was initiated after Sep' 4, so if querying it
+# before that date will cause error 
 table.id <- 
+add_date <- as.Date("2015-09-04")
 
 library(shiny)
 library(scales)
 library(ggplot2)
 library(ggthemes)
 library(lubridate)
+library(data.table)
 library(shinythemes)
 library(shinydashboard)
 library(RGoogleAnalytics)
@@ -71,7 +76,7 @@ body <- dashboardBody(
 
             fluidRow(
 
-                box( title = "Revenu", status = "info",
+                box( title = "Revenue", status = "info",
                      solidHeader = TRUE, collapsible = TRUE,
 
                      plotOutput( outputId = "revenuePlot" )
@@ -120,7 +125,6 @@ body <- dashboardBody(
 
                         actionButton( inputId = "compare",
                                       label   = "Compare!" )
-
                     ),
 
                     mainPanel(
@@ -217,9 +221,9 @@ server <- function( input, output )
             {
                 if( test$estimate > 0 )
                 {
-                    string <- "Good job, showing improvements!!"
+                    string <- "Good job, Showing Improvements!!"
                 }else
-                    string <- "The Performance is decreasing ....." 
+                    string <- "The Performance is Decreasing ....." 
             }else
                 string <- "Can Do Better ^^"    
             
