@@ -3,7 +3,7 @@
 # @date = pass in the date to obtain the total revenue, total UU (uniquepageviews) and avg. session duration 
 DailyData <- function( date, table.id )
 {
-	GoogleQuery <- function( table.id )
+	googleQuery <- function( table.id )
 	{
 		query_list <- Init( start.date  = date,
 			                end.date    = date,
@@ -20,7 +20,7 @@ DailyData <- function( date, table.id )
 	{
 		data_list <- lapply( table.id, function(x)
 		{
-			GoogleQuery(x)
+			googleQuery(x)
 		})
 		data <- do.call( rbind, data_list )
 
@@ -28,7 +28,7 @@ DailyData <- function( date, table.id )
 							 uniquePageviews    = sum(data$uniquePageviews),
 							 avgSessionDuration = mean(data$avgSessionDuration) )
 	}else
-		final <- GoogleQuery(table.id[1])
+		final <- googleQuery(table.id[1])
 	return(final)
 }
 
@@ -57,7 +57,7 @@ DailySource <- function( date )
 
 MonthlyData <- function( start.date, end.date, table.id )
 {
-	GoogleQuery <- function( start.date, end.date, table.id )
+	googleQuery <- function( start.date, end.date, table.id )
 	{
 		query_list <- Init( start.date  = start.date,
 				            end.date    = end.date,
@@ -81,7 +81,7 @@ MonthlyData <- function( start.date, end.date, table.id )
 		if( as.Date(end.date) < add_date )
 		{
 			final <- cbind( days = rev(days), 
-				            GoogleQuery( start.date, end.date, table.id[1] ) )
+				            googleQuery( start.date, end.date, table.id[1] ) )
 
 		}else if( add_date %within% as.interval( ymd(start.date), ymd(end.date) ) )
 		{
@@ -90,13 +90,13 @@ MonthlyData <- function( start.date, end.date, table.id )
 
 			# data1 : start.date to one day before the add_date, and only the first table.id
 			data1 <- cbind( days = days[ mid:1 ], 
-				            GoogleQuery( start.date, add_date - 1, table.id[1] ) )
+				            googleQuery( start.date, add_date - 1, table.id[1] ) )
 
 			# data2 : add_date to end date and both table.id 
 			data_list <- lapply( table.id, function(x)
 			{			
 				cbind( days = days[ length(days):(mid+1) ], 
-				       GoogleQuery( add_date, end.date, x ) )
+				       googleQuery( add_date, end.date, x ) )
 			})
 			data2 <- data.table( do.call( rbind, data_list ) )
 			
@@ -112,7 +112,7 @@ MonthlyData <- function( start.date, end.date, table.id )
 		{
 			data_list <- lapply( table.id, function(x)
 			{			
-				cbind( days = rev(days), GoogleQuery( start.date, end.date, x ) )
+				cbind( days = rev(days), googleQuery( start.date, end.date, x ) )
 			})
 			data <- data.table( do.call( rbind, data_list ) )
 

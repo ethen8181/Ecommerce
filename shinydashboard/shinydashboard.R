@@ -5,7 +5,7 @@
 # in this code, there're two table.ids one for tracking mobile users and one for desktop users
 # the table.id for mobile users(the second one) was initiated after Sep' 4, so if querying it
 # before that date will cause error 
-table.id <- 
+table.id <- c( 95248338, 107933435 )
 add_date <- as.Date("2015-09-04")
 
 library(shiny)
@@ -28,16 +28,16 @@ source("/Users/ethen/Ecommerce/shinydashboard/Dashboard.R")
 # ---------------------------------------------------------------------------------------------
 
 body <- dashboardBody(
-   
-    tabItems(
 
-        # --------------------------------------------------------------------------------------       
-        # daily data 
-        tabItem( tabName = "DashBoard",
+	tabItems(
 
-            fluidRow( 
+		# --------------------------------------------------------------------------------------       
+		# daily data 
+		tabItem( tabName = "DashBoard",
 
-                box( title = "Control Panel", status = "warning", width = 3,
+			fluidRow( 
+
+				box( title = "Control Panel", status = "warning", width = 3,
                      solidHeader = TRUE, collapsible = TRUE, collapsed = TRUE,
 
                      "Choose the date for the aggregated measurement below.",
@@ -49,7 +49,7 @@ body <- dashboardBody(
                 )
             ),
 
-            fluidRow(
+			fluidRow(
 
                 infoBoxOutput( outputId = "revenueBox" ),
                 infoBoxOutput( outputId = "uniquePageViewBox" ),
@@ -58,7 +58,7 @@ body <- dashboardBody(
 
             br(),
 
-            fluidRow(
+			fluidRow(
 
                 box( title = "Control Panel", status = "warning", width = 3,
                      solidHeader = TRUE, collapsible = TRUE, collapsed = TRUE,

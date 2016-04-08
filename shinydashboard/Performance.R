@@ -5,7 +5,7 @@
 # @metric: or so called the measure to indicate the performance 
 PerformanceData <- function( date, metric, url, table.id )
 {
-	GoogleQuery <- function( table.id )
+	googleQuery <- function( table.id )
 	{
 		query_list <- Init( start.date  = date,
 	                    	end.date    = date,
@@ -25,7 +25,7 @@ PerformanceData <- function( date, metric, url, table.id )
 	{	
 		data_list <- lapply( table.id, function(x)
 		{
-			GoogleQuery( table.id = x )
+			googleQuery( table.id = x )
 		})
 		data <- do.call( rbind, data_list )
 
@@ -33,7 +33,7 @@ PerformanceData <- function( date, metric, url, table.id )
 		final <- cbind( date, aggregate( list( metric = data[,2] ), list( hour = data$hour ), FUN = sum ) )
 	}else
 	{
-		final <- cbind( date, GoogleQuery( table.id = table.id[1] ) )
+		final <- cbind( date, googleQuery( table.id = table.id[1] ) )
 		setnames( final, names(final)[3], "metric" )
 	}
 	return(final)

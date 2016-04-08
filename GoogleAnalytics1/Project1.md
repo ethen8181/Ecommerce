@@ -268,10 +268,6 @@ print( transactionperday    , vp = DefineRegion( 3:4, 1:3 ) )
 print( revenuedistribution  , vp = DefineRegion( 3:4, 4:5 ) )
 ```
 
-```
-## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
-```
-
 ![](Project1_files/figure-html/unnamed-chunk-12-1.png) 
 
 **Findings from the Visualization**

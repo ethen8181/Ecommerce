@@ -214,7 +214,7 @@ transactionpercentage <- ggplot( sourcesdata, aes( 1, Source, fill = AggregatedS
 
 ```
 
-```{r, fig.height = 12, fig.width = 15  }
+```{r, fig.height = 12, fig.width = 15, message = FALSE  }
 
 # print the plot 
 DefineRegion <- function( row, col )
